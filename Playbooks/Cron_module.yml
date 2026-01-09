@@ -1,0 +1,24 @@
+# Using this you can run a script on your servers
+---
+- name: Schedule a weekly log cleanup
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Ensure the log cleanup script exists
+      copy:   # this is s a copy module
+        src: cleanup_logs.sh.  # make sure you create this file
+        dest: /usr/local/bin/cleanup_logs.sh.   # also make sure the path is available on your machine remote
+        mode: '0755'
+
+    # Every Monday at 3:30 AM
+    - name: Schedule a weekly log cleanup
+      cron:
+        name: "Weekly Log Cleanup"
+        minute: "30"
+        hour: "3"
+        day: "*"
+        month: "*"
+        weekday: "1"
+        job: "/usr/local/bin/cleanup_logs.sh"
+        user: "root"
